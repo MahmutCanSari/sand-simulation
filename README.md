@@ -1,6 +1,7 @@
 A simulation of sand falling and interacting with obstacles, created using JavaScript and the p5.js library.
 
 How to Use:
+
 To interact with the simulation, hold down the left or right mouse button and drag the mouse to create or remove obstacles and sand particles in the simulation.
 
 Usage To view and interact with the project:
