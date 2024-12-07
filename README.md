@@ -2,7 +2,7 @@ A simulation of sand falling and interacting with obstacles, created using JavaS
 
 How to Use:
 
-To interact with the simulation, hold down the left or right mouse button and drag the mouse to create or remove obstacles and sand particles in the simulation.
+To interact with the simulation, hold down the left or right mouse button and drag the mouse to create sand particles in the simulation and press z to change brush size.
 
 Usage To view and interact with the project:
 
