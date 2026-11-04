@@ -3,6 +3,55 @@ html, body {
   padding: 0;
 }
 
+/* Center the canvas in the middle of the window */
+body {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 100vh;
+  overflow: hidden;
+  background: #a6a6a6; /* gray page */
+}
+
+/* Puts the left panel, canvas and right panel in one row */
+#app {
+  display: flex;
+}
+
+/* Side panels; width and height are set from sketch.js */
+.panel {
+  background: #555555; /* dark gray panels */
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+/* Left panel: buttons stacked top to bottom */
+#left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brush-button {
+  padding: 8px 0;
+  border: none;
+  border-radius: 4px;
+  background: #777777;
+  color: #ffffff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.brush-button:hover {
+  background: #8a8a8a;
+}
+
+/* The selected brush */
+.brush-button.active {
+  background: #d9b84a;
+  color: #222222;
+}
+
 canvas {
   display: block;
 }

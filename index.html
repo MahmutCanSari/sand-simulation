@@ -10,9 +10,22 @@
 
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
+    <script src="particle.js"></script>
+    <script src="sand.js"></script>
   </head>
 
   <body>
+    <!-- Layout: left panel | canvas | right panel -->
+    <div id="app">
+      <div id="left-panel" class="panel">
+        <!-- Brush size buttons; data-brush is the brush size -->
+        <button class="brush-button" data-brush="1">B1</button>
+        <button class="brush-button" data-brush="2">B2</button>
+      </div>
+      <div id="canvas-holder"></div>
+      <div id="right-panel" class="panel"></div>
+    </div>
+
     <script src="sketch.js"></script>
   </body>
 </html>
