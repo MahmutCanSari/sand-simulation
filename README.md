@@ -1,3 +1,5 @@
+> **Note:** This README is outdated and will be updated in the future.
+
 A simulation of sand falling and interacting with obstacles, created using JavaScript and the p5.js library.
 
 How to Use:
