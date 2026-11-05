@@ -3,13 +3,16 @@ class Sand extends Particle {
     super(x, y);
     this.id = id;
     this.type = 'sand';
+    this.density = 0.7;
+    this.canSink = true;
 
     // True while the grain is moving; used to slide only once after landing
     this.wasFalling = false;
   }
 
   move() {
-    if (this.fall()) {
+    // Fall into empty space, or sink through a lighter particle
+    if (this.fall() || this.sink()) {
       this.wasFalling = true;
       return;
     }
@@ -43,10 +46,7 @@ class Sand extends Particle {
       return false;
     }
 
-    grids[this.x][this.y].gridEmpty = true;
-    grids[nextX][nextY].gridEmpty = false;
-    this.x = nextX;
-    this.y = nextY;
+    this.moveTo(nextX, nextY);
 
     // A slide is still movement, so the grain gets another chance after it lands again
     this.wasFalling = true;

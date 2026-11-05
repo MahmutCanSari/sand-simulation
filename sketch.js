@@ -1,12 +1,17 @@
 let grids = [];
-let sands = [];
+let particles = []; // every particle on the canvas (sand, water, ...)
 let size = 2;
 let cols ;
 let rows ;
 let brushS = 1;
-let sK = 0;
 let kX;
 let kY;
+
+// The class used for new particles; changed by the material buttons.
+// The eraser has no class (null), because it removes particles instead of making one.
+let particleType = Sand;
+let materialName = 'sand'; // name of the selected material, used by the X key
+const PARTICLE_TYPES = { eraser: null, sand: Sand, water: Water, brick: Brick };
 
 function setup() {
   const canvasSize = canvasSize4x3();
@@ -14,6 +19,7 @@ function setup() {
   canvas.parent('canvas-holder');
   setupPanels(canvasSize);
   setupBrushButtons();
+  setupMaterialButtons();
   gridArray();
 }
 
@@ -42,66 +48,85 @@ function setupPanels(canvasSize) {
 function draw() {
   background(0);
 
+  // Take erased particles out of the list (once per frame, before moving)
+  particles = particles.filter(p => !p.removed);
+
   // Run physics twice per frame so sand falls faster
   for (let step = 0; step < 2; step++) {
-    for (let i = 0; i < sands.length; i++) {
-      sands[i].move();
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].move();
     }
   }
 
-  // Draw each grain once
-  for (let i = 0; i < sands.length; i++) {
-    sands[i].show();
+  // Draw each particle once
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].show();
   }
 }
 
-// Place sand on a single click and while the mouse is dragged.
+// Place particles on a single click and while the mouse is dragged.
 // Press Z to switch brush size.
 function mousePressed(){
-  placeSand();
+  placeParticle();
 }
 
 function mouseDragged(){
-  placeSand();
+  placeParticle();
 }
 
-function placeSand(){
+function placeParticle(){
   kX = parseInt(mouseX/size);
   kY = parseInt(mouseY/size);
 
-  // Brush size 1: single particle
+  // Brush size 1: single cell
   if(brushS == 1){
-    if(kX<cols && kY<rows && kX>=0 && kY>=0){
-      if(grids[kX][kY].gridEmpty){
-        sands[sK] = new Sand(kX, kY ,sK);
-        sK++;
-        grids[kX][kY].gridEmpty = false;
-      }
-    }
+    paintCell(kX, kY);
   // Brush size 2: small 3x3 area
   }else if(brushS == 2){
     for(let i = -1; i < 2; i++){
       for(let j = -1; j < 2; j++){
-        if(kX+i<cols && kY+j<rows && kX+i>=0 && kY+j>=0){
-          if(grids[kX+i][kY+j].gridEmpty){
-            sands[sK] = new Sand(kX+i, kY+j ,sK);
-            sK++;
-            grids[kX+i][kY+j].gridEmpty = false;
-          }
-        } 
+        paintCell(kX+i, kY+j);
       }
-    }    
+    }
+  }
+}
+
+// Do the selected action on one cell:
+// eraser -> remove the particle there, material -> create a new particle if empty
+function paintCell(x, y){
+  if(x < 0 || x >= cols || y < 0 || y >= rows){
+    return;
+  }
+  const cell = grids[x][y];
+
+  if(particleType === null){
+    if(cell.particle){
+      cell.particle.removed = true; // taken out of the list in draw()
+      cell.particle = null;
+    }
+    return;
+  }
+
+  if(cell.gridEmpty){
+    const p = new particleType(x, y);
+    particles.push(p);
+    cell.particle = p;
   }
 }
 
 // Z key cycles through brush sizes: 1 -> 2 -> back to 1
+// X key cycles through materials in list order: eraser -> sand -> water -> brick -> back to eraser
 function keyPressed(){
-  if(keyCode == 90){
+  if(keyCode == 90){ // Z
     brushS++;
     if(brushS == 3){
       brushS = 1;
     }
     setBrush(brushS);
+  }else if(keyCode == 88){ // X
+    const names = Object.keys(PARTICLE_TYPES);
+    const next = (names.indexOf(materialName) + 1) % names.length;
+    setMaterial(names[next]);
   }
 }
 
@@ -111,6 +136,27 @@ function setupBrushButtons(){
     button.mousePressed(() => setBrush(Number(button.attribute('data-brush'))));
   }
   setBrush(brushS);
+}
+
+// Material buttons in the right panel
+function setupMaterialButtons(){
+  for (const button of selectAll('.material-button')) {
+    button.mousePressed(() => setMaterial(button.attribute('data-type')));
+  }
+  setMaterial('sand');
+}
+
+// Change the particle type and highlight the matching button
+function setMaterial(typeName){
+  particleType = PARTICLE_TYPES[typeName];
+  materialName = typeName;
+  for (const button of selectAll('.material-button')) {
+    if (button.attribute('data-type') === typeName) {
+      button.addClass('active');
+    } else {
+      button.removeClass('active');
+    }
+  }
 }
 
 // Change brush size and highlight the matching button
@@ -141,6 +187,11 @@ class Grid{
   constructor(x,y) {
     this.x = x;
     this.y = y;
-    this.gridEmpty = true;
+    this.particle = null; // the particle in this cell, or null if empty
+  }
+
+  // True when no particle is in this cell
+  get gridEmpty() {
+    return this.particle === null;
   }
 }

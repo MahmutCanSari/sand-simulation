@@ -12,6 +12,8 @@
     <script src="libraries/p5.sound.min.js"></script>
     <script src="particle.js"></script>
     <script src="sand.js"></script>
+    <script src="water.js"></script>
+    <script src="brick.js"></script>
   </head>
 
   <body>
@@ -23,7 +25,15 @@
         <button class="brush-button" data-brush="2">B2</button>
       </div>
       <div id="canvas-holder"></div>
-      <div id="right-panel" class="panel"></div>
+      <div id="right-panel" class="panel">
+        <!-- Material buttons; data-type is the particle type -->
+        <div id="material-list">
+          <button class="material-button" data-type="eraser">Eraser</button>
+          <button class="material-button" data-type="sand">Sand</button>
+          <button class="material-button" data-type="water">Water</button>
+          <button class="material-button" data-type="brick">Brick</button>
+        </div>
+      </div>
     </div>
 
     <script src="sketch.js"></script>
